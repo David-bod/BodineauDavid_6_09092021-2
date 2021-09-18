@@ -1,0 +1,24 @@
+CONTROLLERS :
+
+- sauce.js : Ajouter la fonction likeSauce
+- user.js : OK
+
+MIDDLEWARE :
+
+- auth.js : OK
+- multer-config.js : OK
+
+MODELS :
+
+- sauce.js : OK
+- User.js : OK
+
+ROUTES : 
+
+- sauce.js : Ajouter la route pour like
+- user.js : OK
+
+BACKEND :
+
+- app.js : OK
+- server.js : OK

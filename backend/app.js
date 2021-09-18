@@ -3,7 +3,7 @@ const bodyParser = require('body-parser');
 const mongoose = require('mongoose');
 const path = require('path')
 
-const stuffRoutes = require('./routes/stuff');
+const stuffRoutes = require('./routes/sauce');
 const userRoutes = require('./routes/user');
 
 const { json } = require('body-parser');
@@ -11,7 +11,7 @@ const { json } = require('body-parser');
 const app = express();
 
 // Connexion à la base de données en ligne MongoDB
-mongoose.connect('mongodb+srv://davidbodineau:<pass>@cluster0.rexsa.mongodb.net/Cluster0?retryWrites=true&w=majority',
+mongoose.connect('mongodb+srv://davidbodineau:pass@cluster0.rexsa.mongodb.net/Cluster0?retryWrites=true&w=majority',
   { useNewUrlParser: true,
     useUnifiedTopology: true })
   .then(() => console.log('Connexion à MongoDB réussie !'))
