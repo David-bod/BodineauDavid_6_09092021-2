@@ -12,7 +12,7 @@ router.delete('/:id', auth, stuffCtrl.deleteSauce); // Méthode DELETE pour supp
 router.get('/:id', auth, stuffCtrl.getOneSauce); // Méthode dynamique qui renvoi l'id lorsque l'on clique sur l'objet à vendre
 router.get('/', auth, stuffCtrl.getAllSauces); // Méthode qui récupère les données sur la page d'accueil
 
-//router.post('/:id/like', auth, stuffCtrl.likeSauce);
+router.post('/:id/like', auth, stuffCtrl.likeSauce); // Méthode pour gérer les likes et dislikes d'une sauce
 
 
 module.exports = router;

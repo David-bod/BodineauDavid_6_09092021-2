@@ -1,6 +1,6 @@
 CONTROLLERS :
 
-- sauce.js : Ajouter la fonction likeSauce
+- sauce.js : OK
 - user.js : OK
 
 MIDDLEWARE :
@@ -15,7 +15,7 @@ MODELS :
 
 ROUTES : 
 
-- sauce.js : Ajouter la route pour like
+- sauce.js : OK
 - user.js : OK
 
 BACKEND :
