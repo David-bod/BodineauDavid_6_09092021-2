@@ -56,70 +56,76 @@ exports.getAllSauces = (req, res, next) => {
       .catch(error => res.status(400).json({ error }));
   };
 
-  exports.likeSauce = (req, res, next) => {
+exports.likeSauce = (req, res, next) => {
 
-    let like = req.body.like // Récupération like
-    let sauceId = req.params.id // Récupération de l'id de la sauce
-    let userId = req.body.userId // Récupération de l'id utilisateur (Vérification pour que celui-ci like qu'une fois)
+  // Récupération like
+  let like = req.body.like;
+
+  // Récupération de l'id de la sauce
+  let sauceId = req.params.id;
+
+  // Récupération de l'id utilisateur (Vérification pour que celui-ci like qu'une fois)
+  let userId = req.body.userId;
     
-    if ( like === 1 ) { // Si like = 1, l'utilisateur aime (= like) la sauce / Strictement égal à 1
-      // On utilise updateOne pour actualiser les likes
-      Sauce.updateOne(
+  switch (like) {
 
-      { _id: sauceId }, // Récupération de l'id de la sauce
-      { $push: { usersLiked: userId }, $inc: { likes: +1 }, } // On envoie les données dans le tableau (ID UTILISATEUR + LIKE), incrémentation de 1
-      )
+    case 1: // Si like = 1, l'utilisateur aime (= like) la sauce / Strictement égal à 1
+            
+    Sauce.updateOne( // On utilise updateOne pour actualiser les likes
 
-        .then(() => res.status(200).json({ message: 'Vous avez liké cette sauce.' }))
-        .catch((error) => res.status(400).json({ error }));
-        // Testé et fonctionne correctement
-    }
+    { _id: sauceId }, // Récupération de l'id de la sauce
+    { $push: { usersLiked: userId }, $inc: { likes: +1 }}) // On envoie les données dans le tableau (ID UTILISATEUR + LIKE), incrémentation de 1
+        
+    .then(() => res.status(200).json({ message: 'Vous avez liké cette sauce.' }))
+    .catch((error) => res.status(400).json({ error }));
+    // Testé et fonctionne correctement
 
-    else if ( like === -1 ) { // Si like = -1, l'utilisateur n'aime pas (= dislike) la sauce / Strictement égal à -1
-      Sauce.updateOne(
+    break;
+
+    case 0: // Si like = 0, l'utilisateur annule son like ou son dislike. / Strictement égal à 0
+    // 2 possibilités : soit il annule un like, soit il annule un dislike
+    Sauce.findOne({ _id: sauceId }) // On récupère l'id de la sauce
+
+    .then((sauce) => {
+
+      if ( sauce.usersLiked.find(user => user === userId) ) { // Dans le cas ou l'utilisateur annule un like... / Recherche de correspondance
+
+        // Si l'user === à son id alors autoriser l'annulation
+        Sauce.updateOne(
 
         { _id: sauceId },
-        { $push: { usersDisliked: userId }, $inc: { dislikes: +1 }, } // Tableau Disliked
-        )
-  
-          .then(() => res.status(200).json({ message: 'Vous avez disliké cette sauce.' }))
-          .catch((error) => res.status(400).json({ error }));
-          // Testé et fonctionne correctement
-    }
+        { $pull: { usersLiked: userId }, $inc: { likes: -1 }})
 
-    else if ( like === 0 ) { // Si like = 0, l'utilisateur annule son like ou son dislike. / Strictement égal à 0
+        .then(() => res.status(200).json({ message: 'Vous avez annulé le like de cette sauce.' }))
+        .catch((error) => res.status(400).json({ error }));
+        console.log("annulation like");
+        // Testé et fonctionne correctement
+      }
 
-      // 2 possibilités : soit il annule un like, soit il annule un dislike
-      Sauce.findOne({ _id: sauceId }) // On récupère l'id de la sauce
+      if ( sauce.usersDisliked.find(user => user === userId) ){ // Dans le cas ou l'utilisateur annule un dislike... / Recherche de correspondance
 
-      .then((sauce) => {
+        Sauce.updateOne(
 
-        if ( sauce.usersLiked.find(user => user === userId) ) { // Dans le cas ou l'utilisateur annule un like... / Recherche de correspondance
-          // Si l'user === à son id alors autoriser l'annulation
-          Sauce.updateOne(
+        { _id: sauceId },
+        { $pull: { usersDisliked: userId }, $inc: { dislikes: -1 }})
+    
+        .then(() => res.status(200).json({ message: 'Vous avez annulé le dislike de cette sauce.' }))
+        .catch((error) => res.status(400).json({ error }));
+        console.log("annulation dislike");
+        // Testé et fonctionne correctement
+      }
+    })
+    break;
 
-            { _id: sauceId },
-            { $push: { usersLiked: userId }, $inc: { likes: -1 }, }
-            
-            )
-              .then(() => res.status(200).json({ message: 'Vous avez annulé le like de cette sauce.' }))
-              .catch((error) => res.status(400).json({ error }));
-              console.log("annulation like");
-              // Testé et fonctionne correctement
-        }
-  
-        else if ( sauce.usersDisliked.find(user => user === userId) ){ // Dans le cas ou l'utilisateur annule un dislike... / Recherche de correspondance
-          Sauce.updateOne(
+    case -1:
+    Sauce.updateOne(
 
-            { _id: sauceId },
-            { $push: { usersDisliked: userId }, $inc: { dislikes: -1 }, }
-            )
-      
-              .then(() => res.status(200).json({ message: 'Vous avez annulé le dislike de cette sauce.' }))
-              .catch((error) => res.status(400).json({ error }));
-              console.log("annulation dislike");
-              // Testé et fonctionne correctement
-        }  
-      });
-    }
+    { _id: sauceId },
+    { $push: { usersDisliked: userId }, $inc: { dislikes: +1 }}) // Tableau Disliked
+
+    .then(() => res.status(200).json({ message: 'Vous avez disliké cette sauce.' }))
+    .catch((error) => res.status(400).json({ error }));
+    // Testé et fonctionne correctement
+
+  }
 };
