@@ -3,9 +3,9 @@ const jwt = require('jsonwebtoken'); // jsonWebToken permet de créer des tokens
 
 const User = require('../models/User');
 
-
 exports.signup = (req, res, next) => {
     bcrypt.hash(req.body.password, 13) // Récupère le mot de passe et le hash > 13 passages /
+    
     .then(hash => {
         const user = new User({  // On récupère l'email et le mot de passe(hash)
             email: req.body.email,
